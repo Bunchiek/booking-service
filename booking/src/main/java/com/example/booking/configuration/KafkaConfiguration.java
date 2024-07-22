@@ -1,8 +1,8 @@
 package com.example.booking.configuration;
 
-import com.example.order_service.handlers.KafkaErrorHandler;
-import com.example.order_service.model.OrderEvent;
-import com.example.order_service.model.OrderStatusEvent;
+import com.example.booking.handlers.KafkaErrorHandler;
+import com.example.booking.web.model.OrderEvent;
+import com.example.booking.web.model.OrderStatusEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.*;
 import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;

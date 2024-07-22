@@ -1,6 +1,8 @@
 package com.example.booking.listener;
 
 
+import com.example.booking.web.model.OrderEvent;
+import com.example.booking.web.model.OrderStatusEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
