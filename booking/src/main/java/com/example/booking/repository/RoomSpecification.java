@@ -4,6 +4,7 @@ import com.example.booking.entity.Room;
 import com.example.booking.entity.UnavailableDates;
 import com.example.booking.web.model.filter.RoomFilter;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -17,7 +18,7 @@ public interface RoomSpecification {
                 .and(byRoomDescription(filter.getDescription()))
                 .and(byPrice(filter.getMinPrice(), filter.getMaxPrice()))
                 .and(byCapacity(filter.getCapacity()))
-                .and(byDate(filter.getArriveDate(), filter.getDepartureDate()));
+                .and(byDate(filter.getCheckInDate(), filter.getCheckOutDate()));
     }
 
     static Specification<Room> byRoomId(Long roomId) {
@@ -64,17 +65,29 @@ public interface RoomSpecification {
     }
 
     static Specification<Room> byDate(LocalDate checkInDate, LocalDate checkOutDate) {
-        return ((root, query, criteriaBuilder) -> {
-            if(checkInDate == null || checkOutDate == null) {
-                return null;
+        return (root, query, criteriaBuilder) -> {
+            if (checkInDate == null || checkOutDate == null) {
+                return criteriaBuilder.conjunction();
             }
-            Join<Room, UnavailableDates> join = root.join("dateSet");
 
-            Predicate unavailableBeforeCheckIn = criteriaBuilder.greaterThan(join.get("checkInDate"), checkInDate);
-            Predicate unavailableAfterCheckOut = criteriaBuilder.lessThan(join.get("checkOutDate"), checkOutDate);
+            Join<Room, UnavailableDates> join = root.join("dateSet", JoinType.LEFT);
 
-            return criteriaBuilder.not(criteriaBuilder.and(unavailableBeforeCheckIn, unavailableAfterCheckOut));
-        });
+            Predicate isNullUnavailableFrom = criteriaBuilder.isNull(join.get("unavailableFrom"));
+            Predicate isNullUnavailableTo = criteriaBuilder.isNull(join.get("unavailableTo"));
+
+            Predicate checkInBeforeUnavailableFrom = criteriaBuilder.lessThanOrEqualTo(join.get("unavailableFrom"), checkOutDate);
+            Predicate checkOutAfterUnavailableTo = criteriaBuilder.greaterThanOrEqualTo(join.get("unavailableTo"), checkInDate);
+
+            Predicate noOverlap = criteriaBuilder.or(
+                    isNullUnavailableFrom,
+                    isNullUnavailableTo,
+                    criteriaBuilder.not(
+                            criteriaBuilder.and(checkInBeforeUnavailableFrom, checkOutAfterUnavailableTo)
+                    )
+            );
+
+            return criteriaBuilder.and(noOverlap);
+        };
     }
 
     static Specification<Room> byHotelId(Long hotelId) {

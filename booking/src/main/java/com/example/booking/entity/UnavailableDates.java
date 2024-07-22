@@ -18,11 +18,11 @@ public class UnavailableDates {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "checkIn_Date")
-    private LocalDate checkInDate;
+    @Column(name = "unavailable_from")
+    private LocalDate unavailableFrom;
 
-    @Column(name = "checkOut_Date")
-    private LocalDate checkOutDate;
+    @Column(name = "unavailable_to")
+    private LocalDate unavailableTo;
 
     @ManyToMany(mappedBy = "dateSet")
     @JsonBackReference

@@ -42,19 +42,19 @@ public class BookingServiceImpl implements BookingService {
         Room existedRoom = roomRepository.findById(request.getRoomId()).orElseThrow(()->
                 new EntityNotFoundException(MessageFormat.format("Комната с ID {0} не найдена!",request.getRoomId())));
         if (existedRoom.getDateSet().stream()
-                .anyMatch(bookDates -> (request.getCheckInDate().isAfter(bookDates.getCheckInDate())
-                        && request.getCheckInDate().isBefore(bookDates.getCheckOutDate())
-                || (request.getCheckOutDate().isAfter(bookDates.getCheckInDate())
-                        && request.getCheckOutDate().isBefore(bookDates.getCheckOutDate()))))) {
+                .anyMatch(bookDates -> (request.getCheckInDate().isAfter(bookDates.getUnavailableFrom())
+                        && request.getCheckInDate().isBefore(bookDates.getUnavailableTo())
+                || (request.getCheckOutDate().isAfter(bookDates.getUnavailableFrom())
+                        && request.getCheckOutDate().isBefore(bookDates.getUnavailableTo()))))) {
             throw new DataOccupiedException(MessageFormat
-                    .format("Даты с {0} по {1} уже заняты найдена!", request.getCheckInDate(), request.getCheckOutDate()));
+                    .format("Даты с {0} по {1} уже заняты!", request.getCheckInDate(), request.getCheckOutDate()));
         }
 
         User exstedUser = userService.findById(request.getUserId());
         BookingResponse response = new BookingResponse();
 
-        date.setCheckInDate(request.getCheckInDate());
-        date.setCheckOutDate(request.getCheckOutDate());
+        date.setUnavailableFrom(request.getCheckInDate());
+        date.setUnavailableTo(request.getCheckOutDate());
         date.setRoomSet(Set.of(existedRoom));
         existedRoom.getDateSet().add(date);
 

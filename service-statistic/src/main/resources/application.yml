@@ -9,5 +9,6 @@ spring:
 
 app:
   kafka:
-    kafkaEventTopic: "statistic-topic"
+    kafkaBookingTopic: "booking-status-topic"
+    kafkaRegisterTopic: "register-status-topic"
     kafkaOrderGroupId: "kafka-booking-group-id"

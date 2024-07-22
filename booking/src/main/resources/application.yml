@@ -1,4 +1,6 @@
 spring:
+  kafka:
+    bootstrap-servers: localhost:9092
 #  main:
 #    allow-circular-references: true
   jpa:
@@ -12,7 +14,9 @@ spring:
       connection-init-sql: create schema if not exists app_schema
       connection-timeout: 10000
 
+
 app:
   kafka:
-    kafkaEventTopic: "statistic-topic"
+    kafkaBookingTopic: "booking-status-topic"
+    kafkaRegisterTopic: "register-status-topic"
     kafkaOrderGroupId: "kafka-booking-group-id"

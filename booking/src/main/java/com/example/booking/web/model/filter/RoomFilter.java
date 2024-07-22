@@ -17,8 +17,8 @@ public class RoomFilter {
     private Double minPrice;
     private Double maxPrice;
     private Integer capacity;
-    private LocalDate arriveDate;
-    private LocalDate departureDate;
+    private LocalDate checkInDate;
+    private LocalDate checkOutDate;
     private Long hotelId;
 
 }

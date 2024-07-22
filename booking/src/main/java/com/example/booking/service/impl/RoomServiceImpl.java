@@ -3,6 +3,7 @@ package com.example.booking.service.impl;
 import com.example.booking.entity.Hotel;
 import com.example.booking.entity.Room;
 import com.example.booking.exception.EntityNotFoundException;
+import com.example.booking.exception.ServerErrorException;
 import com.example.booking.mapper.RoomMapper;
 import com.example.booking.repository.HotelRepository;
 import com.example.booking.repository.HotelSpecification;
@@ -16,6 +17,7 @@ import com.example.booking.web.model.filter.RoomFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -33,6 +35,9 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<Room> filterBy(RoomFilter filter) {
+        if (filter.getPageNumber() == null || filter.getPageSize() == null) {
+            throw new ServerErrorException("Необходимо задать pageSize и pageNumber");
+        }
         return repository.findAll(RoomSpecification.withFilter(filter),
                 PageRequest.of(filter.getPageNumber(), filter.getPageSize())).getContent();
     }

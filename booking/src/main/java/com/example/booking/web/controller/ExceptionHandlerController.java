@@ -1,6 +1,7 @@
 package com.example.booking.web.controller;
 
 import com.example.booking.exception.AlreadyExistsException;
+import com.example.booking.exception.DataOccupiedException;
 import com.example.booking.exception.EntityNotFoundException;
 import com.example.booking.exception.ServerErrorException;
 import com.example.booking.web.model.ErrorResponse;
@@ -34,19 +35,24 @@ public class ExceptionHandlerController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getLocalizedMessage()));
     }
 
+    @ExceptionHandler(DataOccupiedException.class)
+    public ResponseEntity<ErrorResponse> dataOccupied(DataOccupiedException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(ex.getLocalizedMessage()));
+    }
+
 //    @ExceptionHandler(IncorrectUserException.class)
 //    public ResponseEntity<ErrorResponse> invalidUser(IncorrectUserException ex) {
 //        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(ex.getLocalizedMessage()));
 //    }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> notValid(MethodArgumentNotValidException ex) {
-        BindingResult bindingResult = ex.getBindingResult();
-        List<String> errorMessages = bindingResult.getAllErrors()
-                .stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .toList();
-        String errorMessage = String.join("; ", errorMessages);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(errorMessage));
-    }
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public ResponseEntity<ErrorResponse> notValid(MethodArgumentNotValidException ex) {
+//        BindingResult bindingResult = ex.getBindingResult();
+//        List<String> errorMessages = bindingResult.getAllErrors()
+//                .stream()
+//                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+//                .toList();
+//        String errorMessage = String.join("; ", errorMessages);
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(errorMessage));
+//    }
 }
