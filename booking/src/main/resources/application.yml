@@ -13,10 +13,13 @@ spring:
       schema: app_schema
       connection-init-sql: create schema if not exists app_schema
       connection-timeout: 10000
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:27017/appdatabase?authSource=admin
 
 
 app:
   kafka:
     kafkaBookingTopic: "booking-status-topic"
     kafkaRegisterTopic: "register-status-topic"
-    kafkaOrderGroupId: "kafka-booking-group-id"
+    kafkaBookingGroupId: "kafka-booking-group-id"

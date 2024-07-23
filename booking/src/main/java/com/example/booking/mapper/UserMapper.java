@@ -1,9 +1,6 @@
 package com.example.booking.mapper;
 
-import com.example.booking.entity.Hotel;
 import com.example.booking.entity.User;
-import com.example.booking.repository.UserRepository;
-import com.example.booking.web.model.HotelListResponse;
 import com.example.booking.web.model.UserListResponse;
 import com.example.booking.web.model.UserRequest;
 import com.example.booking.web.model.UserResponse;

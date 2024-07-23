@@ -2,11 +2,14 @@ package com.example.booking.service.impl;
 
 import com.example.booking.entity.RoleType;
 import com.example.booking.entity.User;
+import com.example.booking.events.RegistrationEvent;
 import com.example.booking.exception.EntityNotFoundException;
 import com.example.booking.repository.UserRepository;
 import com.example.booking.service.UserService;
 import com.example.booking.utils.BeanUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,11 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
+
+    @Value("${app.kafka.kafkaRegisterTopic}")
+    private String kafkaRegisterTopic;
+
+    private final KafkaTemplate<String, RegistrationEvent> kafkaRegistrationEventProducerFactory;
 
     @Override
     public List<User> findAll() {
@@ -34,15 +42,19 @@ public class UserServiceImpl implements UserService {
     public User save(User user, RoleType roleType) {
         user.setRole(roleType);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return repository.save(user);
+        User savedUser = repository.save(user);
+
+        RegistrationEvent event = new RegistrationEvent();
+        event.setUserId(savedUser.getId());
+        kafkaRegistrationEventProducerFactory.send(kafkaRegisterTopic, event);
+
+        return savedUser;
     }
 
     @Override
     public User update(User user) {
         User existedCategory = findById(user.getId());
-
         BeanUtils.copyNonNullProperties(user, existedCategory);
-
         return repository.save(existedCategory);
     }
 
@@ -53,7 +65,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) {
-        User user = repository.findByUsername(username).orElseThrow();
         return repository.findByUsername(username).orElseThrow(()->
                 new EntityNotFoundException(MessageFormat.format("Пользователь с именем {0} не найден!",username)));
     }

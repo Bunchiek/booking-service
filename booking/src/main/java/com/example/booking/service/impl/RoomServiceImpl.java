@@ -5,8 +5,6 @@ import com.example.booking.entity.Room;
 import com.example.booking.exception.EntityNotFoundException;
 import com.example.booking.exception.ServerErrorException;
 import com.example.booking.mapper.RoomMapper;
-import com.example.booking.repository.HotelRepository;
-import com.example.booking.repository.HotelSpecification;
 import com.example.booking.repository.RoomRepository;
 import com.example.booking.repository.RoomSpecification;
 import com.example.booking.service.HotelService;

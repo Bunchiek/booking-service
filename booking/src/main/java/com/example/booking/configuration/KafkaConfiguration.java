@@ -1,5 +1,6 @@
 package com.example.booking.configuration;
 
+import com.example.booking.events.BookingEvent;
 import com.example.booking.handlers.KafkaErrorHandler;
 import com.example.booking.events.RegistrationEvent;
 import com.example.booking.web.model.OrderStatusEvent;
@@ -27,11 +28,11 @@ public class KafkaConfiguration {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Value("${app.kafka.kafkaOrderGroupId}")
-    private String kafkaOrderGroupId;
+    @Value("${app.kafka.kafkaBookingGroupId}")
+    private String kafkaBookingGroupId;
 
     @Bean
-    public ProducerFactory<String, OrderStatusEvent> kafkaOrderStatusEventProducerFactory(ObjectMapper objectMapper) {
+    public ProducerFactory<String, BookingEvent> kafkaBookingEventProducerFactory(ObjectMapper objectMapper) {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -40,13 +41,30 @@ public class KafkaConfiguration {
 
         return new DefaultKafkaProducerFactory<>(config, new StringSerializer(), new JsonSerializer<>(objectMapper));
     }
+
     @Bean
-    public KafkaTemplate<String, OrderStatusEvent> kafkaOrderStatusEventTemplate(ProducerFactory<String, OrderStatusEvent> kafkaOrderStatusEventProducerFactory) {
-        return new KafkaTemplate<>(kafkaOrderStatusEventProducerFactory);
+    public ProducerFactory<String, RegistrationEvent> kafkaRegistrationEventProducerFactory(ObjectMapper objectMapper) {
+        Map<String, Object> config = new HashMap<>();
+
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+        return new DefaultKafkaProducerFactory<>(config, new StringSerializer(), new JsonSerializer<>(objectMapper));
     }
 
     @Bean
-    public ConsumerFactory<String, RegistrationEvent> kafkaOrderEventConsumerFactory(ObjectMapper objectMapper) {
+    public KafkaTemplate<String, BookingEvent> kafkaBookingEventTemplate(ProducerFactory<String, BookingEvent> kafkaBookingEventProducerFactory) {
+        return new KafkaTemplate<>(kafkaBookingEventProducerFactory);
+    }
+
+    @Bean
+    public KafkaTemplate<String, RegistrationEvent> kafkaRegistrationEventTemplate(ProducerFactory<String, RegistrationEvent> kafkaRegistrationEventProducerFactory) {
+        return new KafkaTemplate<>(kafkaRegistrationEventProducerFactory);
+    }
+
+    @Bean
+    public ConsumerFactory<String, BookingEvent> kafkaBookingEventConsumerFactory(ObjectMapper objectMapper) {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
@@ -54,35 +72,46 @@ public class KafkaConfiguration {
         config.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, JsonDeserializer.class);
         config.put(JsonDeserializer.KEY_DEFAULT_TYPE, "com.example.MyKey");
         config.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class.getName());
-        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "com.example.order_service.model.OrderEvent");
+        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "com.example.booking.events.BookingEvent");
         config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-
-//        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
-//        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaOrderGroupId);
-//        config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaBookingGroupId);
 
         return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(objectMapper));
     }
 
-//    @Bean
-//    public ConcurrentKafkaListenerContainerFactory<String, OrderEvent> kafkaOrderEventConcurrentKafkaListenerContainerFactory(
-//            ConsumerFactory<String, OrderEvent> kafkaOrderEventConsumerFactory) {
-//        ConcurrentKafkaListenerContainerFactory<String, OrderEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
-//        factory.setConsumerFactory(kafkaOrderEventConsumerFactory);
-//
-//        return factory;
-//    }
 
     @Bean
-    CommonErrorHandler commonErrorHandler() {
-        return new KafkaErrorHandler();
+    public ConsumerFactory<String, RegistrationEvent> kafkaRegistrationEventConsumerFactory(ObjectMapper objectMapper) {
+        Map<String, Object> config = new HashMap<>();
+
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+        config.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, JsonDeserializer.class);
+        config.put(JsonDeserializer.KEY_DEFAULT_TYPE, "com.example.MyKey");
+        config.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class.getName());
+        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "com.example.booking.events.RegistrationEvent");
+        config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaBookingGroupId);
+
+        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(objectMapper));
     }
 
     @Bean
-    ConcurrentKafkaListenerContainerFactory<String, RegistrationEvent> kafkaOrderEventConcurrentKafkaListenerContainerFactory(
+    ConcurrentKafkaListenerContainerFactory<String, BookingEvent> kafkaBookingEventConcurrentKafkaListenerContainerFactory(
+            ConsumerFactory<String, BookingEvent> consumerFactory,
+            CommonErrorHandler commonErrorHandler
+    ) {
+        var factory = new ConcurrentKafkaListenerContainerFactory<String, BookingEvent>();
+        factory.setConsumerFactory(consumerFactory);
+        factory.setCommonErrorHandler(commonErrorHandler);
+        return factory;
+    }
+
+
+    @Bean
+    ConcurrentKafkaListenerContainerFactory<String, RegistrationEvent> kafkaRegistrationEventConcurrentKafkaListenerContainerFactory(
             ConsumerFactory<String, RegistrationEvent> consumerFactory,
             CommonErrorHandler commonErrorHandler
     ) {
@@ -90,5 +119,10 @@ public class KafkaConfiguration {
         factory.setConsumerFactory(consumerFactory);
         factory.setCommonErrorHandler(commonErrorHandler);
         return factory;
+    }
+
+    @Bean
+    CommonErrorHandler commonErrorHandler() {
+        return new KafkaErrorHandler();
     }
 }
