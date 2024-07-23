@@ -1,4 +1,4 @@
-package com.example.service_statistic.model;
+package com.example.booking.events;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderEvent {
+public class RegistrationEvent {
 
-    private String product;
+    private Long userId;
 
-    private Integer quantity;
 }

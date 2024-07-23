@@ -1,7 +1,7 @@
 package com.example.booking.configuration;
 
 import com.example.booking.handlers.KafkaErrorHandler;
-import com.example.booking.web.model.OrderEvent;
+import com.example.booking.events.RegistrationEvent;
 import com.example.booking.web.model.OrderStatusEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -46,7 +46,7 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public ConsumerFactory<String, OrderEvent> kafkaOrderEventConsumerFactory(ObjectMapper objectMapper) {
+    public ConsumerFactory<String, RegistrationEvent> kafkaOrderEventConsumerFactory(ObjectMapper objectMapper) {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
@@ -82,11 +82,11 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    ConcurrentKafkaListenerContainerFactory<String, OrderEvent> kafkaOrderEventConcurrentKafkaListenerContainerFactory(
-            ConsumerFactory<String, OrderEvent> consumerFactory,
+    ConcurrentKafkaListenerContainerFactory<String, RegistrationEvent> kafkaOrderEventConcurrentKafkaListenerContainerFactory(
+            ConsumerFactory<String, RegistrationEvent> consumerFactory,
             CommonErrorHandler commonErrorHandler
     ) {
-        var factory = new ConcurrentKafkaListenerContainerFactory<String, OrderEvent>();
+        var factory = new ConcurrentKafkaListenerContainerFactory<String, RegistrationEvent>();
         factory.setConsumerFactory(consumerFactory);
         factory.setCommonErrorHandler(commonErrorHandler);
         return factory;

@@ -1,4 +1,4 @@
-package com.example.service_statistic.model;
+package com.example.service_statistic.event;
 
 import lombok.Data;
 

@@ -1,8 +1,8 @@
 package com.example.service_statistic.configuration;
 
 
-import com.example.service_statistic.model.OrderEvent;
-import com.example.service_statistic.model.OrderStatusEvent;
+import com.example.service_statistic.event.OrderEvent;
+import com.example.service_statistic.event.OrderStatusEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;

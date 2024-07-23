@@ -1,6 +1,6 @@
 package com.example.service_statistic.listener;
 
-import com.example.service_statistic.model.OrderStatusEvent;
+import com.example.service_statistic.event.OrderStatusEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;

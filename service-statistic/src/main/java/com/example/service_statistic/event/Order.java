@@ -1,4 +1,4 @@
-package com.example.booking.web.model;
+package com.example.service_statistic.event;
 
 import lombok.Data;
 
