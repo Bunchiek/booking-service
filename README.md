@@ -51,7 +51,7 @@
 ### Клонирование репозитория
 
 ```bash
-git clone https://github.com/your-repo/hotel-booking-service.git
+git clonehttps://github.com/Bunchiek/booking-service.git
 ```
 
 ### Запуск приложения
