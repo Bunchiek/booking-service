@@ -1,8 +1,6 @@
 spring:
   kafka:
     bootstrap-servers: localhost:9092
-#  main:
-#    allow-circular-references: true
   jpa:
     generate-ddl: true
   datasource:

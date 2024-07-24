@@ -2,7 +2,6 @@ package com.example.booking.web.controller;
 
 import com.example.booking.entity.Booking;
 import com.example.booking.service.BookingService;
-import com.example.booking.web.model.BookingListResponse;
 import com.example.booking.web.model.BookingRequest;
 import com.example.booking.web.model.BookingResponse;
 import lombok.RequiredArgsConstructor;

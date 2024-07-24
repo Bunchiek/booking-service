@@ -4,7 +4,6 @@ import com.example.booking.entity.Room;
 import com.example.booking.mapper.RoomMapper;
 import com.example.booking.service.RoomService;
 import com.example.booking.web.model.*;
-import com.example.booking.web.model.filter.HotelFilter;
 import com.example.booking.web.model.filter.RoomFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

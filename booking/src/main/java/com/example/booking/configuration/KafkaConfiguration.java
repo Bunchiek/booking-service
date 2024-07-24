@@ -3,7 +3,6 @@ package com.example.booking.configuration;
 import com.example.booking.events.BookingEvent;
 import com.example.booking.handlers.KafkaErrorHandler;
 import com.example.booking.events.RegistrationEvent;
-import com.example.booking.web.model.OrderStatusEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
